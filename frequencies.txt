@@ -1,0 +1,5 @@
+PRPS: R:2,
+RPRP: S:2,
+SRPR: P:2,
+PSRP: R:2,
+RPSR: P:3,
