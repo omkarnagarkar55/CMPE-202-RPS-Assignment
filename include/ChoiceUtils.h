@@ -4,6 +4,8 @@
 
 #include "Choice.h" // Include the header where Choice is defined
 
-Choice charToChoice(char c); // Correct declaration
+Choice charToChoice(char c);
+
+Choice winningChoiceAgainst(Choice c);
 
 #endif // CHOICEUTILS_H

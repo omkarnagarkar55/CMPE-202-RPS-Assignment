@@ -2,7 +2,6 @@
 #include <iostream>
 
 GameEngine::GameEngine(Player* human, ComputerPlayer* computer) : humanPlayer(human), computerPlayer(computer) {
-    // Constructor implementation
 }
 
 void GameEngine::startGame() {

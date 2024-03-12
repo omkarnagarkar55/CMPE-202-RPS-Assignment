@@ -7,6 +7,7 @@
 #include "include/SmartStrategy.h"
 #include "include/Strategy.h"
 #include "include/Player.h"
+#include "include/FrequencyMap.h"
 
 // Function to convert character input to Choice enum
 Choice charToChoice(char c) {
@@ -33,11 +34,12 @@ int main() {
     std::cin >> choice;
     
     std::unique_ptr<Strategy> strategy;
+    FrequencyMap frequencyMap;
     
     if (choice == 1) {
         strategy = std::make_unique<RandomStrategy>();
     } else if (choice == 2) {
-        strategy = std::make_unique<SmartStrategy>();
+        strategy = std::make_unique<SmartStrategy>(&frequencyMap);
     } else {
         std::cerr << "Invalid choice. Exiting the game." << std::endl;
         return 1;
@@ -70,6 +72,8 @@ int main() {
         } else {
             std::cerr << "Invalid input. Please try again." << std::endl;
         }
+
+        frequencyMap.updateFrequencyMap(toupper(userInput));
     }
     
     // End the game
