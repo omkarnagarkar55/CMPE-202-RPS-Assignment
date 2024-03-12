@@ -12,7 +12,7 @@ Ensure you are in the project's root directory in your terminal or command promp
 
 ```bash
 g++ -o app main.cpp src/GameEngine.cpp src/HumanPlayer.cpp src/RandomStrategy.cpp src/SmartStrategy.cpp src/computerPlayer.cpp src/frequencyMap.cpp src/fileHandler.cpp
-'''
+```
 
 ### Running the Application
 
