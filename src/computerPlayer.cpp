@@ -1,3 +1,11 @@
-#include "ComputerPlayer.h"
+#include "../include/ComputerPlayer.h"
+#include "../include/Strategy.h"
 
-// May remain empty if only serves as a base class for polymorphism
+ComputerPlayer::ComputerPlayer(std::unique_ptr<Strategy> strategy)
+    : strategy(std::move(strategy)) {
+}
+
+// Use the strategy object to make a move
+Choice ComputerPlayer::makeMove() {
+    return strategy->makeChoice();
+}

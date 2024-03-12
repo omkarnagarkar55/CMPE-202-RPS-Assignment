@@ -5,7 +5,7 @@
 
 class HumanPlayer : public Player {
 public:
-    Choice makeChoice() override;
+    Choice makeMove() override;
 };
 
 #endif // HUMANPLAYER_H

@@ -1,9 +1,9 @@
 #ifndef RANDOMSTRATEGY_H
 #define RANDOMSTRATEGY_H
 
-#include "ComputerPlayer.h"
+#include "Strategy.h"
 
-class RandomStrategy : public ComputerPlayer {
+class RandomStrategy : public Strategy {
 public:
     RandomStrategy();
     Choice makeChoice() override;

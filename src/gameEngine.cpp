@@ -42,7 +42,7 @@ void GameEngine::promptPlayerChoice() {
 }
 
 Choice GameEngine::getComputerChoice() {
-    return computerPlayer->makeChoice();
+    return computerPlayer->makeMove();
 }
 
 int GameEngine::determineWinner(Choice userChoice, Choice computerChoice) {

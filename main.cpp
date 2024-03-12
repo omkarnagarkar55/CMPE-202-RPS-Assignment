@@ -1,9 +1,12 @@
 #include <iostream>
+#include <memory>
 #include <cctype> // For std::toupper
 #include "include/GameEngine.h"
 #include "include/HumanPlayer.h"
 #include "include/RandomStrategy.h"
 #include "include/SmartStrategy.h"
+#include "include/Strategy.h"
+#include "include/Player.h"
 
 // Function to convert character input to Choice enum
 Choice charToChoice(char c) {
@@ -29,16 +32,18 @@ int main() {
     int choice;
     std::cin >> choice;
     
-    Player* computerPlayer;
+    std::unique_ptr<Strategy> strategy;
     
     if (choice == 1) {
-        computerPlayer = new RandomStrategy();
+        strategy = std::make_unique<RandomStrategy>();
     } else if (choice == 2) {
-        computerPlayer = new SmartStrategy();
+        strategy = std::make_unique<SmartStrategy>();
     } else {
         std::cerr << "Invalid choice. Exiting the game." << std::endl;
         return 1;
     }
+
+    Player* computerPlayer = new ComputerPlayer(std::move(strategy));
     
     // Create human player object
     HumanPlayer humanPlayer;

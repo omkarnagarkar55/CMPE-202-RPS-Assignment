@@ -5,7 +5,7 @@
 
 class Player {
 public:
-    virtual Choice makeChoice() = 0;
+    virtual Choice makeMove() = 0;
 };
 
 #endif // PLAYER_H

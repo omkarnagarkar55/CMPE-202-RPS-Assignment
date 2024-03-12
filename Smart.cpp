@@ -1,127 +1,132 @@
 #include <iostream>
-#include <unordered_map>
-#include <string>
-#include <cstdlib> // For rand() and srand()
-#include <ctime> // For time()
+#include <vector>
+#include <random>
+#include <memory> // For std::unique_ptr
 
-using namespace std;
+// Enum for possible moves
+enum class Move { ROCK, PAPER, SCISSORS };
 
-enum Choice { ROCK, PAPER, SCISSORS };
+// Strategy Interface
+class Strategy {
+public:
+    virtual Move makeMove() = 0;
+    virtual ~Strategy() {}
+};
 
-// string choiceToString(Choice c) {
-//     switch (c) {
-//         case ROCK: return "Rock";
-//         case PAPER: return "Paper";
-//         case SCISSORS: return "Scissors";
-//         default: return "Unknown";
-//     }
-// }
-
-// Choice charToChoice(char c) {
-//     switch (c) {
-//         case 'R': return ROCK;
-//         case 'P': return PAPER;
-//         case 'S': return SCISSORS;
-//         default: return ROCK; // Safe default
-//     }
-// }
-
-// Choice winningChoiceAgainst(Choice c) {
-//     switch (c) {
-//         case ROCK: return PAPER;
-//         case PAPER: return SCISSORS;
-//         case SCISSORS: return ROCK;
-//         default: return ROCK; // Safe default
-//     }
-// }
-
-const int N = 3; // Lookback window for patterns
-string sequence; // Stores the last N-1 moves
-unordered_map<string, unordered_map<char, int>> frequencyMap; // Frequency of patterns
-
-// Predicts the next move based on the pattern
-Choice predictNextMove() {
-    if (sequence.length() < N - 1) {
-        // Not enough data for prediction
-        return static_cast<Choice>(rand() % 3);
+// Random Strategy
+class RandomStrategy : public Strategy {
+public:
+    Move makeMove() override {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, 2);
+        return static_cast<Move>(dis(gen));
     }
+};
 
-    string recentPattern = sequence.substr(sequence.length() - (N - 1));
-    if (frequencyMap.find(recentPattern) == frequencyMap.end()) {
-        // Pattern not found
-        return static_cast<Choice>(rand() % 3);
+// Smart Strategy (Simplified)
+class SmartStrategy : public Strategy {
+    // Example: Always choose paper for simplicity
+public:
+    Move makeMove() override {
+        return Move::PAPER; // Simplified strategy for demonstration
     }
+};
 
-    char mostLikelyMove;
-    int maxFrequency = -1;
-    for (auto& moveFreq : frequencyMap[recentPattern]) {
-        if (moveFreq.second > maxFrequency) {
-            maxFrequency = moveFreq.second;
-            mostLikelyMove = moveFreq.first;
+// Player Interface
+class Player {
+public:
+    virtual Move getMove() = 0;
+    virtual ~Player() {}
+};
+
+// Human Player
+class HumanPlayer : public Player {
+public:
+    Move getMove() override {
+        char choice;
+        std::cout << "Choose (R)ock, (P)aper, or (S)cissors: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 'R':
+            case 'r':
+                return Move::ROCK;
+            case 'P':
+            case 'p':
+                return Move::PAPER;
+            case 'S':
+            case 's':
+                return Move::SCISSORS;
+            default:
+                std::cout << "Invalid choice. Defaulting to Rock.\n";
+                return Move::ROCK;
+        }
+    }
+};
+
+// Computer Player
+class ComputerPlayer : public Player {
+    std::unique_ptr<Strategy> strategy;
+
+public:
+    ComputerPlayer(std::unique_ptr<Strategy> strategy) : strategy(std::move(strategy)) {}
+
+    Move getMove() override {
+        return strategy->makeMove();
+    }
+};
+
+// Game Class
+class Game {
+    HumanPlayer human;
+    ComputerPlayer computer;
+    int scoreHuman = 0;
+    int scoreComputer = 0;
+
+    void determineWinner(Move humanMove, Move computerMove) {
+        if (humanMove == computerMove) {
+            std::cout << "It's a draw.\n";
+        } else if ((humanMove == Move::ROCK && computerMove == Move::SCISSORS) ||
+                   (humanMove == Move::PAPER && computerMove == Move::ROCK) ||
+                   (humanMove == Move::SCISSORS && computerMove == Move::PAPER)) {
+            std::cout << "Human wins this round.\n";
+            scoreHuman++;
+        } else {
+            std::cout << "Computer wins this round.\n";
+            scoreComputer++;
         }
     }
 
-    return charToChoice(mostLikelyMove);
-}
+public:
+    Game(std::unique_ptr<Strategy> strat) : computer(std::move(strat)) {}
 
-// Updates the frequency map with the latest move
-void updateFrequencyMap(char move) {
-    if (sequence.length() == N - 1) {
-        frequencyMap[sequence][move]++;
-    }
-    sequence += move;
-    if (sequence.length() > N - 1) {
-        sequence.erase(sequence.begin());
-    }
-}
+    void play() {
+        for (int round = 1; round <= 20; ++round) {
+            std::cout << "\nRound " << round << std::endl;
+            Move humanMove = human.getMove();
+            Move computerMove = computer.getMove();
+            determineWinner(humanMove, computerMove);
+        }
 
-// Determine the winner of each round
-int determineWinner(Choice userChoice, Choice computerChoice) {
-    if (userChoice == computerChoice) {
-        return 0; // Draw
-    } else if ((userChoice == ROCK && computerChoice == SCISSORS) ||
-               (userChoice == PAPER && computerChoice == ROCK) ||
-               (userChoice == SCISSORS && computerChoice == PAPER)) {
-        return 1; // User wins
-    } else {
-        return -1; // Computer wins
+        std::cout << "\nFinal Score:\nHuman: " << scoreHuman << "\nComputer: " << scoreComputer << std::endl;
     }
-}
+};
 
 int main() {
-    srand(static_cast<unsigned int>(time(nullptr))); // Seed for random number generation
+    std::cout << "Choose strategy for computer:\n1. Random\n2. Smart\nEnter choice: ";
+    int choice;
+    std::cin >> choice;
 
-    cout << "Rock, Paper, Scissors Game against the Computer!\n";
-    cout << "Enter R for Rock, P for Paper, S for Scissors, Q to quit:\n";
-
-    char userMove;
-    while (true) {
-        cout << "> ";
-        cin >> userMove;
-        if (toupper(userMove) == 'Q') {
-            break; // Quit the game
-        }
-
-        Choice userChoice = charToChoice(toupper(userMove));
-        Choice predictedMove = predictNextMove();
-        Choice computerChoice = winningChoiceAgainst(predictedMove); // Computer plays to win against the predicted move
-
-        cout << "You chose " << choiceToString(userChoice) << ".\n";
-        cout << "Computer chose " << choiceToString(computerChoice) << ".\n";
-
-        // Update pattern recognition
-        updateFrequencyMap(toupper(userMove));
-
-        // Determine the winner and display the result
-        int winner = determineWinner(userChoice, computerChoice);
-        if (winner == 0) {
-            cout << "It's a draw!\n";
-        } else if (winner == 1) {
-            cout << "You win!\n";
-        } else {
-            cout << "Computer wins!\n";
-        }
+    std::unique_ptr<Strategy> strategy;
+    if (choice == 1) {
+        strategy = std::make_unique<RandomStrategy>();
+    } else {
+        strategy = std::make_unique<SmartStrategy>();
     }
+
+    Game game(std::move(strategy));
+    game.play();
 
     return 0;
 }

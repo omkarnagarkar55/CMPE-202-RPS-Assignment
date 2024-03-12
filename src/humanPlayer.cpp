@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-Choice HumanPlayer::makeChoice() {
+Choice HumanPlayer::makeMove() {
     std::cout << "Enter your choice (R for Rock, P for Paper, S for Scissors): ";
     char userInput;
     std::cin >> userInput;
