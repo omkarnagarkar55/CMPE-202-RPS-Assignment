@@ -1,6 +1,7 @@
 #include "../include/FrequencyMap.h"
 #include <cstdlib>
 #include <string>
+#include "../include/ChoiceUtils.h"
 
 void FrequencyMap::updateFrequencyMap(char move) {
     if (sequence.length() == N - 1) {
@@ -18,7 +19,7 @@ Choice FrequencyMap::predictNextMove() {
         return static_cast<Choice>(rand() % 3);
     }
 
-    string recentPattern = sequence.substr(sequence.length() - (N - 1));
+    std::string recentPattern = sequence.substr(sequence.length() - (N - 1));
     if (frequencyMap.find(recentPattern) == frequencyMap.end()) {
         // Pattern not found
         return static_cast<Choice>(rand() % 3);

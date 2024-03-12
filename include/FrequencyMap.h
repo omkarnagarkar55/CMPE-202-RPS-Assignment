@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include "Choice.h"
+#include <string>
 
 class FrequencyMap {
 private:
