@@ -8,6 +8,7 @@ class SmartStrategy : public Strategy {
 public:
     SmartStrategy(FrequencyMap* frequencyMap);
     Choice makeChoice() override;
+    Choice winningChoiceAgainst(Choice choice);
 private:
     FrequencyMap* frequencyMap;
 };

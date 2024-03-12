@@ -30,16 +30,3 @@ Choice charToChoice(char c) {
     }
 }
 
-// Returns the Choice that would win against the given Choice
-Choice winningChoiceAgainst(Choice c) {
-    switch (c) {
-    case ROCK:
-        return PAPER;
-    case PAPER:
-        return SCISSORS;
-    case SCISSORS:
-        return ROCK;
-    default:
-        return ROCK; // Default to ROCK
-    }
-}
