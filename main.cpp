@@ -8,6 +8,7 @@
 #include "include/Strategy.h"
 #include "include/Player.h"
 #include "include/FrequencyMap.h"
+#include "include/FileHandler.h"
 
 // Function to convert character input to Choice enum
 Choice charToChoice(char c) {
@@ -34,11 +35,13 @@ int main() {
     std::cin >> choice;
     
     std::unique_ptr<Strategy> strategy;
+    FileHandler fileHandler;
     FrequencyMap frequencyMap;
     
     if (choice == 1) {
         strategy = std::make_unique<RandomStrategy>();
     } else if (choice == 2) {
+        fileHandler.readFrequenciesFromFile("frequencies.txt",frequencyMap.frequencyMap);
         strategy = std::make_unique<SmartStrategy>(&frequencyMap);
     } else {
         std::cerr << "Invalid choice. Exiting the game." << std::endl;
@@ -64,6 +67,7 @@ int main() {
         
         if (userInput == 'Q') {
             std::cout << "Exiting the game." << std::endl;
+            fileHandler.writeFrequenciesToFile("frequencies.txt",frequencyMap.frequencyMap);
             break;
         } else if (userInput == 'R' || userInput == 'P' || userInput == 'S') {
             // Convert user input to Choice enum and play a round
