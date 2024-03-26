@@ -57,28 +57,23 @@ int main() {
     GameEngine gameEngine(&humanPlayer, dynamic_cast<ComputerPlayer*>(computerPlayer));
     gameEngine.startGame();
     
-    // Play the game
-    char userInput;
-    while (true) {
-        //userInput = humanPlayer.makeChoice();
-        std::cout << "Press R for Rock, P for Paper, S for Scissors, or Q to quit: ";
+    for (int round = 1; round <= gameEngine.getTotalRounds(); ++round) {
+        char userInput;
+        std::cout << "\nPress R for Rock, P for Paper, S for Scissors, or Q to quit: ";
         std::cin >> userInput;
         userInput = std::toupper(userInput); // Convert input to uppercase
         
         if (userInput == 'Q') {
-            std::cout << "Exiting the game." << std::endl;
-            fileHandler.writeFrequenciesToFile("frequencies.txt",frequencyMap.frequencyMap);
+            std::cout << "Exiting the game early." << std::endl;
             break;
-        } else if (userInput == 'R' || userInput == 'P' || userInput == 'S') {
-            // Convert user input to Choice enum and play a round
+        } else {
             Choice userChoice = charToChoice(userInput);
             gameEngine.playRound(userChoice);
-        } else {
-            std::cerr << "Invalid input. Please try again." << std::endl;
         }
-
-        frequencyMap.updateFrequencyMap(toupper(userInput));
     }
+    
+    gameEngine.endGame();
+
     
     // End the game
     gameEngine.endGame();

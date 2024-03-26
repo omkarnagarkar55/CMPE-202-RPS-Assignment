@@ -4,56 +4,74 @@
 GameEngine::GameEngine(Player* human, ComputerPlayer* computer) : humanPlayer(human), computerPlayer(computer) {
 }
 
+void GameEngine::setTotalRounds(int rounds) {
+    this->totalRounds = rounds;
+}
+
 void GameEngine::startGame() {
     std::cout << "Rock, Paper, Scissors Game against the Computer!\n";
+    std::cout << "Enter the number of rounds you want to play: ";
+    int rounds;
+    std::cin >> rounds;
+    setTotalRounds(rounds);
 }
 
 void GameEngine::playRound(Choice userChoice) {
-    std::cout << "Playing a round..." << std::endl;
-    Choice computerChoice = getComputerChoice();
+    currentRound++;
+    std::cout << "\nRound " << currentRound << " of " << totalRounds << std::endl;
+    
+    Choice computerChoice = computerPlayer->makeMove();
     std::cout << "User chose: " << choiceToString(userChoice) << std::endl;
     std::cout << "Computer chose: " << choiceToString(computerChoice) << std::endl;
     
-    // Determine the winner
     int winner = determineWinner(userChoice, computerChoice);
     
-    // Display the result
     if (winner == 0) {
         std::cout << "It's a draw!\n";
+        ties++;
     } else if (winner == 1) {
         std::cout << "You win!\n";
+        humanWins++;
     } else {
         std::cout << "Computer wins!\n";
+        computerWins++;
     }
+
+    displayCurrentScore();
+}
+
+void GameEngine::displayCurrentScore() {
+    std::cout << "Current Score after " << currentRound << " rounds: \n";
+    std::cout << "Human Wins: " << humanWins << "\n";
+    std::cout << "Computer Wins: " << computerWins << "\n";
+    std::cout << "Ties: " << ties << "\n";
 }
 
 void GameEngine::endGame() {
-    std::cout << "Game ended!" << std::endl;
-    // Display final scores and any cleanup
+    std::cout << "\nGame ended!\nFinal Score:\n";
+    displayCurrentScore();
+    // Any additional cleanup can be added here
 }
 
-void GameEngine::promptPlayerChoice() {
-    std::cout << "Enter R for Rock, P for Paper, S for Scissors: ";
-    char userMove;
-    std::cin >> userMove;
-    Choice userChoice = charToChoice(userMove);
-    playRound(userChoice);
-}
-
-Choice GameEngine::getComputerChoice() {
-    return computerPlayer->makeMove();
+int GameEngine::getTotalRounds() const {
+    return totalRounds;
 }
 
 int GameEngine::determineWinner(Choice userChoice, Choice computerChoice) {
+    // Check for a draw
     if (userChoice == computerChoice) {
         return 0; // Draw
-    } else if ((userChoice == ROCK && computerChoice == SCISSORS) ||
-               (userChoice == PAPER && computerChoice == ROCK) ||
-               (userChoice == SCISSORS && computerChoice == PAPER)) {
-        return 1; // User wins
-    } else {
-        return -1; // Computer wins
     }
+    
+    // Check for cases where the user wins
+    if ((userChoice == ROCK && computerChoice == SCISSORS) ||
+        (userChoice == PAPER && computerChoice == ROCK) ||
+        (userChoice == SCISSORS && computerChoice == PAPER)) {
+        return 1; // User wins
+    }
+
+    // If none of the above, computer wins
+    return -1; // Computer wins
 }
 
 std::string GameEngine::choiceToString(Choice c) {
@@ -66,18 +84,5 @@ std::string GameEngine::choiceToString(Choice c) {
             return "Scissors";
         default:
             return "Unknown";
-    }
-}
-
-Choice GameEngine::charToChoice(char c) {
-    switch (c) {
-        case 'R':
-            return ROCK;
-        case 'P':
-            return PAPER;
-        case 'S':
-            return SCISSORS;
-        default:
-            return ROCK; // Safe default
     }
 }

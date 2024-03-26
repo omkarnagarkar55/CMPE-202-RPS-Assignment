@@ -9,18 +9,22 @@ class GameEngine {
 private:
     Player* humanPlayer;
     ComputerPlayer* computerPlayer;
+    int totalRounds = 0;
+    int currentRound = 0;
+    int humanWins = 0;
+    int computerWins = 0;
+    int ties = 0;
 
 public:
     GameEngine(Player* human, ComputerPlayer* computer);
-
+    int determineWinner(Choice userChoice, Choice computerChoice);
+    void setTotalRounds(int rounds);
     void startGame();
     void playRound(Choice userChoice);
     void endGame();
-    void promptPlayerChoice();
-    Choice getComputerChoice();
-    int determineWinner(Choice userChoice, Choice computerChoice);
+    void displayCurrentScore();
     static std::string choiceToString(Choice c);
-    static Choice charToChoice(char c);
+    int getTotalRounds() const;
 };
 
 #endif // GAMEENGINE_H
